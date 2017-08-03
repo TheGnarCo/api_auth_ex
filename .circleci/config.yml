@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: elixir:1.5
+    steps:
+      - checkout
+      - run: mix deps.get
+      - run: mix test
