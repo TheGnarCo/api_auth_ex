@@ -1,6 +1,8 @@
 # ApiAuth
 
-**TODO: Add description**
+HMAC API authentication.
+
+This is Elixir implementation should be compatible with [https://github.com/mgomes/api_auth](https://github.com/mgomes/api_auth)
 
 ## Installation
 
@@ -19,3 +21,7 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/api_auth](https://hexdocs.pm/api_auth).
 
+## Running tests
+
+* `mix deps.get`
+* `mix test`
