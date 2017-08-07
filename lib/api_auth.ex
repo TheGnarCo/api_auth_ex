@@ -21,6 +21,12 @@ defmodule ApiAuth do
   """
 
   alias ApiAuth.HeaderValues
+  alias ApiAuth.ContentTypeHeader
+  alias ApiAuth.DateHeader
+  alias ApiAuth.UriHeader
+  alias ApiAuth.ContentHashHeader
+  alias ApiAuth.ContentHashHeader
+  alias ApiAuth.AuthorizationHeader
 
   def headers(request_headers, uri, client_id, secret_key, opts \\ []) do
     method              = opts |> Keyword.get(:method, "GET") |> String.upcase()
@@ -28,12 +34,13 @@ defmodule ApiAuth do
     content_algorithm   = opts |> Keyword.get(:content_algorithm, :sha256)
     signature_algorithm = opts |> Keyword.get(:signature_algorithm, :sha256)
 
-    HeaderValues.wrap(request_headers)
-    |> ApiAuth.ContentTypeHeader.headers()
-    |> ApiAuth.DateHeader.headers()
-    |> ApiAuth.UriHeader.headers(uri)
-    |> ApiAuth.ContentHashHeader.headers(method, content, content_algorithm)
-    |> ApiAuth.AuthorizationHeader.headers(method, client_id, secret_key, signature_algorithm)
+    request_headers
+    |> HeaderValues.wrap()
+    |> ContentTypeHeader.headers()
+    |> DateHeader.headers()
+    |> UriHeader.headers(uri)
+    |> ContentHashHeader.headers(method, content, content_algorithm)
+    |> AuthorizationHeader.headers(method, client_id, secret_key, signature_algorithm)
     |> HeaderValues.unwrap()
   end
 end

@@ -8,15 +8,17 @@ defmodule ApiAuth.AuthorizationHeader do
   alias ApiAuth.HeaderValues
 
   def headers(hv, method, client_id, secret_key, algorithm) do
-    authorization = canonical_string(
+    string = canonical_string(
       method,
       hv |> HeaderValues.get(:content_type),
       hv |> HeaderValues.get(:content_hash),
       hv |> HeaderValues.get(:uri, "/"),
       hv |> HeaderValues.get(:timestamp)
     )
-    |> signature(secret_key, algorithm)
-    |> header_string(client_id, algorithm)
+
+    authorization = string
+                    |> signature(secret_key, algorithm)
+                    |> header_string(client_id, algorithm)
 
     hv |> HeaderValues.put(@keys, @header_key, @value_key, authorization)
   end
@@ -27,7 +29,8 @@ defmodule ApiAuth.AuthorizationHeader do
   end
 
   defp signature(canonical_string, secret_key, algorithm) do
-    :crypto.hmac(algorithm, secret_key, canonical_string)
+    algorithm
+    |> :crypto.hmac(secret_key, canonical_string)
     |> Base.encode64()
   end
 

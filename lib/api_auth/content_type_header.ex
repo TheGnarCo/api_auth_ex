@@ -4,7 +4,9 @@ defmodule ApiAuth.ContentTypeHeader do
   @keys      [:"Content-Type", :"CONTENT-TYPE", :"CONTENT_TYPE", :"HTTP_CONTENT_TYPE"]
   @value_key :content_type
 
+  alias ApiAuth.HeaderValues
+
   def headers(hv) do
-    ApiAuth.HeaderValues.copy(hv, @keys, @value_key)
+    HeaderValues.copy(hv, @keys, @value_key)
   end
 end
