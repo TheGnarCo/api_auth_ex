@@ -22,7 +22,7 @@ defmodule ApiAuth.HeaderValues do
 
     new_assigns = case header do
       {_k, v} -> assigns |> Map.put(value_key, v)
-      _         -> assigns |> Map.put(value_key, default)
+      _       -> assigns |> Map.put(value_key, default)
     end
 
     {headers, new_assigns}
@@ -42,12 +42,12 @@ defmodule ApiAuth.HeaderValues do
 
     new_headers = case header do
       {_k, _v} -> headers
-      _          -> headers |> Keyword.put(header_key, default)
+      _        -> headers |> Keyword.put(header_key, default)
     end
 
     new_assigns = case header do
       {_k, v} -> assigns |> Map.put(value_key, v)
-      _         -> assigns |> Map.put(value_key, default)
+      _       -> assigns |> Map.put(value_key, default)
     end
 
     {new_headers, new_assigns}

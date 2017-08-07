@@ -6,9 +6,10 @@ defmodule ApiAuth.AuthorizationHeader do
   @value_key  :authorization
 
   alias ApiAuth.HeaderValues
+  alias ApiAuth.HeaderCompare
 
-  def headers(hv, method, client_id, secret_key, algorithm) do
-    string = canonical_string(
+  def override(hv, method, client_id, secret_key, algorithm) do
+    canonical = canonical_string(
       method,
       hv |> HeaderValues.get(:content_type),
       hv |> HeaderValues.get(:content_hash),
@@ -16,7 +17,7 @@ defmodule ApiAuth.AuthorizationHeader do
       hv |> HeaderValues.get(:timestamp)
     )
 
-    authorization = string
+    authorization = canonical
                     |> signature(secret_key, algorithm)
                     |> header_string(client_id, algorithm)
 
@@ -32,6 +33,10 @@ defmodule ApiAuth.AuthorizationHeader do
     algorithm
     |> :crypto.hmac(secret_key, canonical_string)
     |> Base.encode64()
+  end
+
+  def compare(hc) do
+    hc |> HeaderCompare.compare(@keys)
   end
 
   defp header_string(signature, client_id, :sha256) do
