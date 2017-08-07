@@ -6,13 +6,15 @@ defmodule ApiAuth.DateHeader do
   @value_key  :timestamp
 
   alias ApiAuth.HeaderValues
+  alias Calendar.DateTime
+  alias Calendar.DateTime.Format
 
   def headers(hv) do
     hv |> HeaderValues.put_new(@keys, @header_key, @value_key, timestamp())
   end
 
   defp timestamp do
-    Calendar.DateTime.now_utc()
-    |> Calendar.DateTime.Format.httpdate
+    DateTime.now_utc()
+    |> Format.httpdate
   end
 end

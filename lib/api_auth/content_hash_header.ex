@@ -11,11 +11,15 @@ defmodule ApiAuth.ContentHashHeader do
   alias ApiAuth.HeaderValues
 
   def headers(hv, method, content, :md5) when method in @methods do
-    hv |> HeaderValues.put_new(@md5_keys, @md5_header_key, @value_key, hash(:md5, content))
+    content_hash = hash(:md5, content)
+
+    hv |> HeaderValues.put_new(@md5_keys, @md5_header_key, @value_key, content_hash)
   end
 
   def headers(hv, method, content, algorithm) when method in @methods do
-    hv |> HeaderValues.put_new(@keys, @header_key, @value_key, hash(algorithm, content))
+    content_hash = hash(algorithm, content)
+
+    hv |> HeaderValues.put_new(@keys, @header_key, @value_key, content_hash)
   end
 
   def headers(hv, _method, _content, _algorithm) do
@@ -23,7 +27,8 @@ defmodule ApiAuth.ContentHashHeader do
   end
 
   defp hash(algorithm, content) do
-    :crypto.hash(algorithm, content)
+    algorithm
+    |> :crypto.hash(content)
     |> Base.encode64()
   end
 end
