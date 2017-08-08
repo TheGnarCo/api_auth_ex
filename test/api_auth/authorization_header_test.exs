@@ -2,6 +2,10 @@ defmodule ApiAuth.AuthorizationHeaderTest do
   use ExUnit.Case
 
   alias ApiAuth.AuthorizationHeader
+  alias ApiAuth.DateHeader
+  alias ApiAuth.ContentTypeHeader
+  alias ApiAuth.ContentHashHeader
+  alias ApiAuth.UriHeader
   alias ApiAuth.HeaderValues
   alias ApiAuth.HeaderCompare
 
@@ -10,7 +14,7 @@ defmodule ApiAuth.AuthorizationHeaderTest do
       headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
       value = headers
               |> HeaderValues.wrap()
-              |> ApiAuth.DateHeader.headers()
+              |> DateHeader.headers()
               |> AuthorizationHeader.override("GET", "1044", "123", :sha)
               |> HeaderValues.get(:authorization)
 
@@ -21,10 +25,10 @@ defmodule ApiAuth.AuthorizationHeaderTest do
       headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT", "Content-Type": "text/plain"]
       value = headers
               |> HeaderValues.wrap()
-              |> ApiAuth.DateHeader.headers()
-              |> ApiAuth.ContentTypeHeader.headers()
-              |> ApiAuth.ContentHashHeader.headers("PUT", "", :md5)
-              |> ApiAuth.UriHeader.headers("/resource.xml?foo=bar&bar=foo")
+              |> DateHeader.headers()
+              |> ContentTypeHeader.headers()
+              |> ContentHashHeader.headers("PUT", "", :md5)
+              |> UriHeader.headers("/resource.xml?foo=bar&bar=foo")
               |> AuthorizationHeader.override("PUT", "1044", "123", :sha256)
               |> HeaderValues.get(:authorization)
 
@@ -35,7 +39,7 @@ defmodule ApiAuth.AuthorizationHeaderTest do
       headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
       new_headers = headers
                     |> HeaderValues.wrap()
-                    |> ApiAuth.DateHeader.headers()
+                    |> DateHeader.headers()
                     |> AuthorizationHeader.override("GET", "1044", "123", :sha)
                     |> HeaderValues.unwrap()
 
@@ -47,7 +51,7 @@ defmodule ApiAuth.AuthorizationHeaderTest do
       headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT", AUTHORIZATION: "foo"]
       new_headers = headers
                     |> HeaderValues.wrap()
-                    |> ApiAuth.DateHeader.headers()
+                    |> DateHeader.headers()
                     |> AuthorizationHeader.override("GET", "1044", "123", :sha)
                     |> HeaderValues.unwrap()
 
