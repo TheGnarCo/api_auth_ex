@@ -71,6 +71,26 @@ defmodule ApiAuth do
     |> HeaderCompare.to_boolean()
   end
 
+  @doc """
+  Takes a keyword list of headers and pulls the client id from the Authorization header
+  returns the {:ok, client_id} or {:error}
+
+  ## Examples
+
+      iex> headers = [Authorization: "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="]
+      ...> ApiAuth.client_id(headers)
+      {:ok, "client_id"}
+
+      iex> headers = []
+      ...> ApiAuth.client_id(headers)
+      :error
+
+  """
+  def client_id(headers) do
+    headers
+    |> AuthorizationHeader.extract_client_id()
+  end
+
   defp valid_headers(request_headers, uri, client_id, secret_key, opts) do
     parsed = parse(opts)
 

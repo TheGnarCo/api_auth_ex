@@ -1,6 +1,8 @@
 defmodule ApiAuth.HeaderValues do
   @moduledoc false
 
+  alias ApiAuth.Utils
+
   def wrap(headers) do
     {headers, %{}}
   end
@@ -18,18 +20,18 @@ defmodule ApiAuth.HeaderValues do
   end
 
   def copy({headers, assigns}, keys, value_key, default \\ "") do
-    header = Enum.find(headers, member(keys))
+    header = Utils.find(headers, keys)
 
     new_assigns = case header do
-      {_k, v} -> assigns |> Map.put(value_key, v)
-      _       -> assigns |> Map.put(value_key, default)
+      {:ok, v} -> assigns |> Map.put(value_key, v)
+      _        -> assigns |> Map.put(value_key, default)
     end
 
     {headers, new_assigns}
   end
 
   def put({headers, assigns}, keys, header_key, value_key, default) do
-    clean_headers = Enum.reject(headers, member(keys))
+    clean_headers = Utils.reject(headers, keys)
 
     {
       clean_headers  |> Keyword.put(header_key, default),
@@ -38,22 +40,18 @@ defmodule ApiAuth.HeaderValues do
   end
 
   def put_new({headers, assigns}, keys, header_key, value_key, default) do
-    header = Enum.find(headers, member(keys))
+    header = Utils.find(headers, keys)
 
     new_headers = case header do
-      {_k, _v} -> headers
-      _        -> headers |> Keyword.put(header_key, default)
+      {:ok, _v} -> headers
+      _         -> headers |> Keyword.put(header_key, default)
     end
 
     new_assigns = case header do
-      {_k, v} -> assigns |> Map.put(value_key, v)
-      _       -> assigns |> Map.put(value_key, default)
+      {:ok, v} -> assigns |> Map.put(value_key, v)
+      _        -> assigns |> Map.put(value_key, default)
     end
 
     {new_headers, new_assigns}
-  end
-
-  defp member(keys) do
-    fn {k, _v} -> Enum.member?(keys, k) end
   end
 end

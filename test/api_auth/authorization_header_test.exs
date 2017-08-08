@@ -90,4 +90,51 @@ defmodule ApiAuth.AuthorizationHeaderTest do
       |> refute()
     end
   end
+
+  describe "extract_client_id" do
+    test "it extracts the client id" do
+      headers = [Authorization: "APIAuth-HMAC-SHA256 test:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="]
+
+      client_id = headers
+                  |> AuthorizationHeader.extract_client_id()
+
+      assert client_id == {:ok, "test"}
+    end
+
+    test "it works with different kinds of authorization headers" do
+      headers = [AUTHORIZATION: "APIAuth 1044:49FglhLqXWuJqBu5SQOH4F8D1Og="]
+
+      client_id = headers
+                  |> AuthorizationHeader.extract_client_id()
+
+      assert client_id == {:ok, "1044"}
+    end
+
+    test "it returns an error when there is no client id" do
+      headers = [Authorization: "APIAuth-HMAC-SHA256 :v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="]
+
+      client_id = headers
+                  |> AuthorizationHeader.extract_client_id()
+
+      assert client_id == :error
+    end
+
+    test "it returns an error when the authorization header is nonsense" do
+      headers = [Authorization: "zoboomafoo"]
+
+      client_id = headers
+                  |> AuthorizationHeader.extract_client_id()
+
+      assert client_id == :error
+    end
+
+    test "it returns an error when there is no authorization header" do
+      headers = []
+
+      client_id = headers
+                  |> AuthorizationHeader.extract_client_id()
+
+      assert client_id == :error
+    end
+  end
 end
