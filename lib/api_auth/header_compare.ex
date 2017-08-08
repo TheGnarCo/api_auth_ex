@@ -1,6 +1,8 @@
 defmodule ApiAuth.HeaderCompare do
   @moduledoc false
 
+  alias ApiAuth.Utils
+
   def wrap(valid, request) do
     {:ok, valid, request}
   end
@@ -10,8 +12,8 @@ defmodule ApiAuth.HeaderCompare do
   end
 
   def compare({:ok, valid, request} = hc, keys, fun) do
-    with {:ok, valid_value}   <- find(valid, keys),
-         {:ok, request_value} <- find(request, keys),
+    with {:ok, valid_value}   <- Utils.find(valid, keys),
+         {:ok, request_value} <- Utils.find(request, keys),
          true                 <- fun.(valid_value, request_value)
     do
       hc
@@ -30,14 +32,5 @@ defmodule ApiAuth.HeaderCompare do
 
   def to_boolean(_hc) do
     false
-  end
-
-  defp find(headers, keys) do
-    pair = Enum.find(headers, fn {k, _v} -> Enum.member?(keys, k) end)
-
-    case pair do
-      {_k, v} -> {:ok, v}
-      _       -> :error
-    end
   end
 end

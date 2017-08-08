@@ -4,9 +4,11 @@ defmodule ApiAuth.AuthorizationHeader do
   @keys       [:Authorization, :AUTHORIZATION]
   @header_key :Authorization
   @value_key  :authorization
+  @pattern    ~r{\AAPIAuth(?:-HMAC-(?:MD5|SHA(?:1|224|256|384|512)?))? (?<client_id>[^:]+):(?<signature>.+)\z}
 
   alias ApiAuth.HeaderValues
   alias ApiAuth.HeaderCompare
+  alias ApiAuth.Utils
 
   def override(hv, method, client_id, secret_key, algorithm) do
     canonical = canonical_string(
@@ -22,6 +24,16 @@ defmodule ApiAuth.AuthorizationHeader do
                     |> header_string(client_id, algorithm)
 
     hv |> HeaderValues.put(@keys, @header_key, @value_key, authorization)
+  end
+
+  def extract_client_id(headers) do
+    with {:ok, header}               <- Utils.find(headers, @keys),
+         %{"client_id" => client_id} <- Regex.named_captures(@pattern, header)
+    do
+      {:ok, client_id}
+    else
+      _ -> :error
+    end
   end
 
   defp canonical_string(method, content_type, content_hash, uri, timestamp) do
