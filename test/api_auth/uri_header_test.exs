@@ -15,7 +15,7 @@ defmodule ApiAuth.UriHeaderTest do
       assert value == "/test"
     end
 
-    test "it sets a default value of empty string" do
+    test "it sets puts a header if there isn't one" do
       headers = [foo: "bar"]
       value = headers
               |> HeaderValues.wrap()
@@ -53,6 +53,38 @@ defmodule ApiAuth.UriHeaderTest do
               |> HeaderValues.get(:uri)
 
       assert value == "/"
+    end
+  end
+
+  describe "override" do
+    test "it overrides the value in the header" do
+      headers = [foo: "bar", "X-Original-URI": "/test"]
+      value = headers
+              |> HeaderValues.wrap()
+              |> UriHeader.override("/other")
+              |> HeaderValues.get(:uri)
+
+      assert value == "/other"
+    end
+
+    test "it changse the headers" do
+      headers = [foo: "bar"]
+      new_headers = headers
+                    |> HeaderValues.wrap()
+                    |> UriHeader.override("/other")
+                    |> HeaderValues.unwrap()
+
+      assert new_headers == ["X-Original-URI": "/other", foo: "bar"]
+    end
+
+    test "the default uri is /" do
+      headers = [foo: "bar", "X-Original-URI": "/bar"]
+      value = headers
+              |> HeaderValues.wrap()
+              |> UriHeader.override("https://www.example.com/foo")
+              |> HeaderValues.get(:uri)
+
+      assert value == "/foo"
     end
   end
 end

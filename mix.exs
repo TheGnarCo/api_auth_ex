@@ -20,6 +20,7 @@ defmodule ApiAuth.Mixfile do
   defp deps do
     [
       {:calendar, "~> 0.17"},
+      {:secure_compare, "~> 0.0.2"},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
     ]
   end
