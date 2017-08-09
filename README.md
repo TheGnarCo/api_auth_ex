@@ -21,6 +21,52 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/api_auth](https://hexdocs.pm/api_auth).
 
+## Usage
+
+### HTTPotion
+
+To make a GET request:
+
+```elixir
+headers = ApiAuth.headers([], "/path", client_id, secret_key)
+
+"http://example.com/path"
+|> HTTPotion.get(headers: headers)
+```
+
+Or a POST request:
+
+```elixir
+body    = "post body"
+headers = ApiAuth.headers([], "/post/path", client_id, secret_key,
+                          method: "POST", content: body)
+
+"http://example.com/post/path"
+|> HTTPotion.post(body: body, headers: headers)
+```
+
+### HTTPoison
+
+To make a GET request:
+
+```elixir
+headers = ApiAuth.headers([], "/path", client_id, secret_key)
+
+"http://example.com/path"
+|> HTTPoison.get(headers)
+```
+
+Or a POST request:
+
+```elixir
+body    = "{}"
+headers = ApiAuth.headers(["Content-Type": "application/json"], "/post/path",
+                           client_id, secret_key, method: "POST", content: body)
+
+"http://example.com/path"
+|> HTTPoison.post(body, headers)
+```
+
 ## Running tests
 
 * `mix deps.get`
