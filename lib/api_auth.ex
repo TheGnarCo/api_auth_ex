@@ -7,6 +7,7 @@ defmodule ApiAuth do
 
   alias ApiAuth.HeaderValues
   alias ApiAuth.HeaderCompare
+  alias ApiAuth.Utils
 
   alias ApiAuth.ContentTypeHeader
   alias ApiAuth.DateHeader
@@ -34,6 +35,7 @@ defmodule ApiAuth do
     parsed = parse(opts)
 
     request_headers
+    |> Utils.convert()
     |> HeaderValues.wrap()
     |> ContentTypeHeader.headers()
     |> DateHeader.headers()
@@ -61,10 +63,12 @@ defmodule ApiAuth do
   def authentic?(request_headers, uri, client_id, secret_key, opts \\ []) do
     parsed = parse(opts)
 
-    valid = valid_headers(request_headers, uri, client_id, secret_key, opts)
+    converted_headers = Utils.convert(request_headers)
+
+    valid = valid_headers(converted_headers, uri, client_id, secret_key, opts)
 
     valid
-    |> HeaderCompare.wrap(request_headers)
+    |> HeaderCompare.wrap(converted_headers)
     |> ContentHashHeader.compare(parsed.method)
     |> AuthorizationHeader.compare()
     |> DateHeader.compare()

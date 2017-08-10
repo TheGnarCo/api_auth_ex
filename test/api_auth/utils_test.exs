@@ -33,4 +33,27 @@ defmodule ApiAuth.UtilsTest do
       assert new_headers == [hello: "world"]
     end
   end
+
+  describe "convert" do
+    test "it returns a keyword list unchanged" do
+      headers = [a: "1", b: "2", c: "3"]
+      new_headers = Utils.convert(headers)
+
+      assert new_headers == headers
+    end
+
+    test "give a list of {string,string} tuples it returns a keyword list" do
+      headers = [{"A", 1}, {"B", 2}]
+      new_headers = Utils.convert(headers)
+
+      assert new_headers == [A: 1, B: 2]
+    end
+
+    test "it upcases all the strings in {string,string} lists" do
+      headers = [{"a", 1}]
+      new_headers = Utils.convert(headers)
+
+      assert new_headers == [A: 1]
+    end
+  end
 end
