@@ -26,6 +26,16 @@ defmodule ApiAuthTest do
       |> assert()
     end
 
+    test "it is true when headers are lowercase and strings (like in Phoenix)" do
+      headers = ApiAuth.headers([], "/", "1044", "123")
+      fun = fn {k, v} -> {String.downcase(Atom.to_string(k)), v} end
+      phoenix_headers = Enum.map(headers, fun)
+
+      phoenix_headers
+      |> ApiAuth.authentic?("/", "1044", "123")
+      |> assert()
+    end
+
     test "it is false when the secret key is different" do
       headers = ApiAuth.headers([], "/", "1044", "123")
 

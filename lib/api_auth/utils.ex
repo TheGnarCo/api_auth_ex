@@ -14,7 +14,23 @@ defmodule ApiAuth.Utils do
     Enum.reject(headers, member_fun(keys))
   end
 
+  def convert(headers) do
+    Enum.map(headers, &convert_key/1)
+  end
+
   defp member_fun(keys) do
     fn {k, _v} -> Enum.member?(keys, k) end
+  end
+
+  defp convert_key({key, value}) when is_bitstring(key) do
+    new_key = key
+              |> String.upcase()
+              |> String.to_atom()
+
+    {new_key, value}
+  end
+
+  defp convert_key(tuple) do
+    tuple
   end
 end
