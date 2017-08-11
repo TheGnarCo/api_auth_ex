@@ -20,10 +20,8 @@ defmodule ApiAuth.UriHeader do
   end
 
   def parse_uri(uri) do
-    %{path: path, query: query} = URI.parse(uri)
+    %{path: path} = URI.parse(uri)
 
-    path = if path && path != "", do: path, else: "/"
-
-    if query, do: "#{path}?#{query}", else: path
+    if path && path != "", do: path, else: "/"
   end
 end

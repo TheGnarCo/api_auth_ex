@@ -36,20 +36,27 @@ defmodule ApiAuth.UriHeaderTest do
     end
 
     test "it removes the host part of the uri" do
-      headers = [foo: "bar", "X-Original-URI": "https://www.example.com/test?redirect=https://www.google.com"]
-      value = headers
+      value = []
               |> HeaderValues.wrap()
-              |> UriHeader.headers("/other")
+              |> UriHeader.headers("https://www.example.com/foo")
               |> HeaderValues.get(:uri)
 
-      assert value == "/test?redirect=https://www.google.com"
+      assert value == "/foo"
+    end
+
+    test "it removes the get params from the uri" do
+      value = []
+              |> HeaderValues.wrap()
+              |> UriHeader.headers("/foo?a=b")
+              |> HeaderValues.get(:uri)
+
+      assert value == "/foo"
     end
 
     test "the default uri is /" do
-      headers = [foo: "bar", "X-Original-URI": "https://www.example.com"]
-      value = headers
+      value = []
               |> HeaderValues.wrap()
-              |> UriHeader.headers("/other")
+              |> UriHeader.headers("https://www.example.com")
               |> HeaderValues.get(:uri)
 
       assert value == "/"
@@ -75,16 +82,6 @@ defmodule ApiAuth.UriHeaderTest do
                     |> HeaderValues.unwrap()
 
       assert new_headers == ["X-Original-URI": "/other", foo: "bar"]
-    end
-
-    test "the default uri is /" do
-      headers = [foo: "bar", "X-Original-URI": "/bar"]
-      value = headers
-              |> HeaderValues.wrap()
-              |> UriHeader.override("https://www.example.com/foo")
-              |> HeaderValues.get(:uri)
-
-      assert value == "/foo"
     end
   end
 end
