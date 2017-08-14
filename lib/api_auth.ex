@@ -92,6 +92,7 @@ defmodule ApiAuth do
   """
   def client_id(headers) do
     headers
+    |> Utils.convert()
     |> AuthorizationHeader.extract_client_id()
   end
 

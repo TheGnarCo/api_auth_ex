@@ -32,7 +32,7 @@ defmodule ApiAuth.AuthorizationHeaderTest do
               |> AuthorizationHeader.override("PUT", "1044", "123", :sha256)
               |> HeaderValues.get(:authorization)
 
-      assert value == "APIAuth-HMAC-SHA256 1044:5JhErRhsIbN2+O595t/Rkax2n7w/YZ0f92BYgZFN5ds="
+      assert value == "APIAuth-HMAC-SHA256 1044:bImrylY1pAdLNFl+TpyDMPTcjnFGp1azC1cm86t2rSA="
     end
 
     test "it writes the signature to the headers" do

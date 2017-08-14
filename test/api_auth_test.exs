@@ -95,4 +95,26 @@ defmodule ApiAuthTest do
       |> refute()
     end
   end
+
+  describe "client_id" do
+    test "it gets the client id from the headers" do
+      headers = [Authorization: "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="]
+      client_id_tuple = ApiAuth.client_id(headers)
+
+      assert client_id_tuple == {:ok, "client_id"}
+    end
+
+    test "it gets the client id when given a list of string tuples" do
+      headers = [{"authorization", "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="}]
+      client_id_tuple = ApiAuth.client_id(headers)
+
+      assert client_id_tuple == {:ok, "client_id"}
+    end
+
+    test "it returns an error if there is no client id" do
+      client_id_tuple = ApiAuth.client_id([])
+
+      assert client_id_tuple == :error
+    end
+  end
 end
