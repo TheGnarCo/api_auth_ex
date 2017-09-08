@@ -69,28 +69,31 @@ headers = ApiAuth.headers(["Content-Type": "application/json"], "/post/path",
 
 ### Phoenix
 
-To authenticate all requests for a particular pipeline, create a new plug and configure it
-to use `ApiAuth`:
+To authenticate all requests for a particular pipeline, create a new
+plug and configure it to use `ApiAuth`.
+Note that you have to add it to `endpoint.ex` and not `router.ex` because it's
+[not always possible](https://github.com/phoenixframework/phoenix/issues/459)
+to get the body of a request in a regular pipeline:
 
 ```elixir
-# lib/myapp_web/router.ex
+# lib/myapp_web/endpoint.ex
 
-defmodule Myapp.Router do
-  use Myapp, :router
+defmodule Myapp.Endpoint do
+  use Phoenix.Endpoint, otp_app: :myapp
 
-  pipeline :api do
-    plug Myapp.Plugs.Authentication
-    plug :accepts, ["json"]
-  end
+  ...
 
-  scope "/", Myapp do
-    ...
-  end
+  # Add the `Authentication` plug immediately before `Plug.Parsers`.
+  # What `mount: "api"` does is limit the routes that are authenticated.
+  # In this example, only routes that start with `api/` are authenticated.
+  plug Myapp.Plugs.Authentication, mount: "api"
 
-  scope "/api", Myapp do
-    pipe_through :api
-    ...
-  end
+  plug Plug.Parsers,
+    parsers: [:urlencoded, :multipart, :json],
+    pass: ["*/*"],
+    json_decoder: Poison
+
+  ...
 end
 ```
 
@@ -102,7 +105,14 @@ defmodule Myapp.Plugs.Authentication do
 
   def init(default), do: default
 
-  def call(conn, _default) do
+  def call(conn, [mount: mount]) do
+    case conn.path_info do
+      [^mount | _] -> authorize(conn)
+      _            -> conn
+    end
+  end
+
+  defp authorize(conn) do
     client_id  = "client id"
     secret_key = "secret key"
     body       = get_body(conn)
