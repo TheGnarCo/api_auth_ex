@@ -20,8 +20,16 @@ defmodule ApiAuth.UriHeader do
   end
 
   def parse_uri(uri) do
-    %{path: path} = URI.parse(uri)
+    %{path: path, query: query} = URI.parse(uri)
 
+    case query do
+      nil -> value_for(path)
+      ""  -> value_for(path)
+      _   -> "#{path}?#{query}"
+    end
+  end
+
+  defp value_for(path) do
     if path && path != "", do: path, else: "/"
   end
 end

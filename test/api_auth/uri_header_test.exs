@@ -44,13 +44,13 @@ defmodule ApiAuth.UriHeaderTest do
       assert value == "/foo"
     end
 
-    test "it removes the get params from the uri" do
+    test "it does not remove the get params from the uri" do
       value = []
               |> HeaderValues.wrap()
               |> UriHeader.headers("/foo?a=b")
               |> HeaderValues.get(:uri)
 
-      assert value == "/foo"
+      assert value == "/foo?a=b"
     end
 
     test "the default uri is /" do
