@@ -12,7 +12,7 @@ by adding `api_auth` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:api_auth, "~> 0.1.0"}
+    {:api_auth, "~> 0.2.0"}
   ]
 end
 ```
