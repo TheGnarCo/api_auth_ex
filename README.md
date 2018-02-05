@@ -71,45 +71,46 @@ headers = ApiAuth.headers(["Content-Type": "application/json"], "/post/path",
 
 To authenticate all requests for a particular pipeline, create a new
 plug and configure it to use `ApiAuth`.
-Note that you have to add it to `endpoint.ex` and not `router.ex` because it's
-[not always possible](https://github.com/phoenixframework/phoenix/issues/459)
-to get the body of a request in a regular pipeline:
+
+Note that `Plug.Conn.read_body/2` can only be called once. This means that
+if you need the body for something else, you have to make sure to save it.
+There are also particular issues with JSON APIs due to the way `Plug.Parsers.JSON`
+works.
+
+[This issue](https://github.com/phoenixframework/phoenix/issues/459)
+has some discussion about these problems and different workarounds.
+The sample code below assumes that the raw body has been saved in `conn.assigns.raw_body`.
 
 ```elixir
-# lib/myapp_web/endpoint.ex
+# lib/myapp_web/router.ex
 
-defmodule Myapp.Endpoint do
-  use Phoenix.Endpoint, otp_app: :myapp
+defmodule MyappWeb.Router do
+  use MyappWeb, :router
 
-  ...
-
-  # Add the `Authentication` plug immediately before `Plug.Parsers`.
-  # What `mount: "api"` does is limit the routes that are authenticated.
-  # In this example, only routes that start with `api/` are authenticated.
-  plug Myapp.Plugs.Authentication, mount: "api"
-
-  plug Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
-    pass: ["*/*"],
-    json_decoder: Poison
-
-  ...
+  pipeline :api do
+    plug(Myapp.AuthenticationPlug)
+  end
 end
 ```
 
 ```elixir
-# lib/myapp_web/plugs/authentication.ex
+# lib/myapp_web/plugs/authentication_plug.ex
 
-defmodule Myapp.Plugs.Authentication do
+defmodule MyappWeb.AuthenticationPlug do
+  @moduledoc """
+  Authentication plug
+  Using the `api_auth` package (https://github.com/TheGnarCo/api_auth_ex#phoenix)
+  this plug allows requests to continue through the pipeline only if they
+  have a valid HMAC signature.
+  """
+
   import Plug.Conn
 
   def init(default), do: default
 
-  def call(conn, [mount: mount]) do
-    case conn.path_info do
-      [^mount | _] -> authorize(conn)
-      _            -> conn
-    end
+  def call(conn, _default) do
+    conn
+    |> authorize()
   end
 
   defp authorize(conn) do
@@ -124,12 +125,10 @@ defmodule Myapp.Plugs.Authentication do
       method: method,
     } = conn
 
-    full_path =
-      if query_string do
-        "#{request_path}?#{query_string}"
-      else
-        request_path
-      end
+    full_path = request_path
+    |> URI.parse()
+    |> Map.put(:query, query_string)
+    |> URI.to_string()
 
     # you may need to add `content_algorithm: :md5` depending on the code signing the request
     # see the compatibility section of the README
@@ -146,10 +145,13 @@ defmodule Myapp.Plugs.Authentication do
     end
   end
 
-  defp get_body(conn) do
-    case read_body(conn) do
-      {:ok, body, _conn} -> body
-      _                  -> ""
+  # in order for this code to work, `read_body/2` must be called somewhere earlier
+  # in the pipeline and the result must be stored in `conn.assigns.raw_body`
+  # (see https://github.com/phoenixframework/phoenix/issues/459)
+  defp get_body(%{assigns: assigns}) do
+    case assigns do
+      %{raw_body: body} -> body
+      _ -> ""
     end
   end
 end
@@ -159,10 +161,10 @@ If you have multiple clients, you'll need to look up the secret key by client id
 The plug would look similar to the one above but with a few changes:
 
 ```elixir
-defmodule Myapp.Plugs.Authentication do
+defmodule MyappWeb.AuthenticationPlug do
   import Plug.Conn
 
-  def call(conn, _default) do
+  defp authorize(conn) do
     client_id = ApiAuth.client_id(conn.req_headers)
     {:ok, secret_key} = Myapp.Client.get_secret_key(client_id)
 
