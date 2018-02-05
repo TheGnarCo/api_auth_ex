@@ -118,14 +118,22 @@ defmodule Myapp.Plugs.Authentication do
     body       = get_body(conn)
 
     %{
+      query_string: query_string,
       req_headers: req_headers,
       request_path: request_path,
       method: method,
     } = conn
 
+    full_path =
+      if query_string do
+        "#{request_path}?#{query_string}"
+      else
+        request_path
+      end
+
     # you may need to add `content_algorithm: :md5` depending on the code signing the request
     # see the compatibility section of the README
-    authentic = ApiAuth.authentic?(req_headers, request_path, client_id,
+    authentic = ApiAuth.authentic?(req_headers, full_path, client_id,
                                    secret_key, method: method,
                                    content: body)
 
