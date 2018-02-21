@@ -220,3 +220,12 @@ headers
 
 * `mix deps.get`
 * `mix test`
+
+## About The Gnar Company
+
+![The Gnar Company](https://avatars0.githubusercontent.com/u/17011419?s=100&v=4)
+
+The Gnar Company is a Boston-based development company that builds robust
+web and mobile apps designed for the long haul.
+
+For more information see [our website](https://www.thegnar.co/).
