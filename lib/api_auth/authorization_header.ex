@@ -43,7 +43,7 @@ defmodule ApiAuth.AuthorizationHeader do
 
   defp signature(canonical_string, secret_key, algorithm) do
     algorithm
-    |> :crypto.hmac(secret_key, canonical_string)
+    |> :crypto.mac(secret_key, canonical_string)
     |> Base.encode64()
   end
 
