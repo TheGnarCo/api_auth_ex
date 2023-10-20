@@ -1,9 +1,9 @@
 defmodule ApiAuth.DateHeader do
   @moduledoc false
 
-  @keys         [:DATE, :HTTP_DATE]
-  @header_key   :DATE
-  @value_key    :timestamp
+  @keys [:DATE, :HTTP_DATE]
+  @header_key :DATE
+  @value_key :timestamp
   @allowed_skew 900
 
   alias ApiAuth.HeaderValues
@@ -23,7 +23,7 @@ defmodule ApiAuth.DateHeader do
 
   defp timestamp do
     DateTime.now_utc()
-    |> Format.httpdate
+    |> Format.httpdate()
   end
 
   defp timestamp_compare(t1, t2) do
@@ -34,9 +34,9 @@ defmodule ApiAuth.DateHeader do
     now = DateTime.now_utc()
 
     case DateTime.diff(now, time) do
-      {:ok, _, _, :same_time}   -> true
+      {:ok, _, _, :same_time} -> true
       {:ok, seconds, _, :after} -> seconds < @allowed_skew
-      _                         -> false
+      _ -> false
     end
   end
 

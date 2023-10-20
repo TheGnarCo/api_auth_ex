@@ -41,7 +41,12 @@ defmodule ApiAuth do
     |> DateHeader.headers()
     |> UriHeader.headers(uri)
     |> ContentHashHeader.headers(parsed.method, parsed.content, parsed.content_algorithm)
-    |> AuthorizationHeader.override(parsed.method, client_id, secret_key, parsed.signature_algorithm)
+    |> AuthorizationHeader.override(
+      parsed.method,
+      client_id,
+      secret_key,
+      parsed.signature_algorithm
+    )
     |> HeaderValues.unwrap()
   end
 
@@ -105,16 +110,21 @@ defmodule ApiAuth do
     |> DateHeader.headers()
     |> UriHeader.override(uri)
     |> ContentHashHeader.override(parsed.method, parsed.content, parsed.content_algorithm)
-    |> AuthorizationHeader.override(parsed.method, client_id, secret_key, parsed.signature_algorithm)
+    |> AuthorizationHeader.override(
+      parsed.method,
+      client_id,
+      secret_key,
+      parsed.signature_algorithm
+    )
     |> HeaderValues.unwrap()
   end
 
   defp parse(opts) do
     %{
-      method:              opts |> Keyword.get(:method, "GET") |> String.upcase(),
-      content:             opts |> Keyword.get(:content, ""),
-      content_algorithm:   opts |> Keyword.get(:content_algorithm, :sha256),
-      signature_algorithm: opts |> Keyword.get(:signature_algorithm, :sha256),
+      method: opts |> Keyword.get(:method, "GET") |> String.upcase(),
+      content: opts |> Keyword.get(:content, ""),
+      content_algorithm: opts |> Keyword.get(:content_algorithm, :sha256),
+      signature_algorithm: opts |> Keyword.get(:signature_algorithm, :sha256)
     }
   end
 end

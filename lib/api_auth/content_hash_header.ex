@@ -1,12 +1,18 @@
 defmodule ApiAuth.ContentHashHeader do
   @moduledoc false
 
-  @methods        ["PUT", "POST"]
-  @keys           [:"X-APIAuth-Content-Hash", :"X-APIAUTH-CONTENT-HASH", :X_APIAUTH_CONTENT_HASH,
-                   :"Content-MD5", :"CONTENT-MD5", :CONTENT_MD5]
-  @header_key     :"X-APIAuth-Content-Hash"
+  @methods ["PUT", "POST"]
+  @keys [
+    :"X-APIAuth-Content-Hash",
+    :"X-APIAUTH-CONTENT-HASH",
+    :X_APIAUTH_CONTENT_HASH,
+    :"Content-MD5",
+    :"CONTENT-MD5",
+    :CONTENT_MD5
+  ]
+  @header_key :"X-APIAuth-Content-Hash"
   @md5_header_key :"Content-MD5"
-  @value_key      :content_hash
+  @value_key :content_hash
 
   alias ApiAuth.HeaderValues
   alias ApiAuth.HeaderCompare
