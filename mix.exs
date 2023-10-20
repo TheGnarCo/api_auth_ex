@@ -26,6 +26,7 @@ defmodule ApiAuth.Mixfile do
       {:secure_compare, "~> 0.0.2"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
+      {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false},
     ]
   end
 
