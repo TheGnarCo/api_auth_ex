@@ -1,4 +1,9 @@
 # ApiAuth
+[![Elixir CI](https://github.com/TheGnarCo/api_auth_ex/actions/workflows/elixir.yml/badge.svg?branch=master)](https://github.com/TheGnarCo/api_auth_ex/actions/workflows/elixir.yml)
+<a href="https://gitmoji.dev">
+  <img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square"
+    alt="Gitmoji">
+</a>
 
 HMAC API authentication.
 
@@ -12,7 +17,7 @@ by adding `api_auth` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:api_auth, "~> 0.2.0"}
+    {:api_auth, "~> 0.4.0"}
   ]
 end
 ```
