@@ -4,8 +4,8 @@ defmodule ApiAuth.Mixfile do
   def project do
     [
       app: :api_auth,
-      version: "0.3.0",
-      elixir: "~> 1.13",
+      version: "0.4.0",
+      elixir: "~> 1.14.0",
       description: "HMAC API Authentication",
       source_url: "https://github.com/TheGnarCo/api_auth_ex/",
       start_permanent: Mix.env == :prod,
