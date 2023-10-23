@@ -25,7 +25,7 @@ defmodule ApiAuth.Mixfile do
       {:timex, "~> 3.7.9"},
       {:plug_crypto, "~> 1.0"},
       {:credo, "~> 1.6.1", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.14", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false}
     ]
   end
