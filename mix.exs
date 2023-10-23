@@ -22,7 +22,7 @@ defmodule ApiAuth.Mixfile do
 
   defp deps do
     [
-      {:calendar, "~> 1.0"},
+      {:timex, "~> 3.7.9"},
       {:plug_crypto, "~> 1.0"},
       {:credo, "~> 1.6.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
