@@ -225,7 +225,5 @@ headers
 
 ![The Gnar Company](https://avatars0.githubusercontent.com/u/17011419?s=100&v=4)
 
-The Gnar Company is a Boston-based development company that builds robust
-web and mobile apps designed for the long haul.
+If you’re ready to dream it, we’re ready to build it. The Gnar is a custom software company ready to tackle your biggest challenges. Visit [The Gnar Company website](https://www.thegnar.com/) to learn more about us or [contact us](https://www.thegnar.com/contact) to see how we can help design and develop your product.
 
-For more information see [our website](https://www.thegnar.co/).
