@@ -6,7 +6,7 @@ defmodule ApiAuth.Utils do
 
     case pair do
       {_k, v} -> {:ok, v}
-      _       -> :error
+      _ -> :error
     end
   end
 
@@ -23,9 +23,10 @@ defmodule ApiAuth.Utils do
   end
 
   defp convert_key({key, value}) when is_bitstring(key) do
-    new_key = key
-              |> String.upcase()
-              |> String.to_atom()
+    new_key =
+      key
+      |> String.upcase()
+      |> String.to_atom()
 
     {new_key, value}
   end

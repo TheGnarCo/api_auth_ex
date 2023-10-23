@@ -4,13 +4,13 @@ defmodule ApiAuth.Mixfile do
   def project do
     [
       app: :api_auth,
-      version: "0.3.0",
-      elixir: "~> 1.13",
+      version: "0.4.0",
+      elixir: "~> 1.14.0",
       description: "HMAC API Authentication",
       source_url: "https://github.com/TheGnarCo/api_auth_ex/",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
-      package: package(),
+      package: package()
     ]
   end
 
@@ -23,9 +23,10 @@ defmodule ApiAuth.Mixfile do
   defp deps do
     [
       {:calendar, "~> 1.0"},
-      {:secure_compare, "~> 0.0.2"},
-      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:plug_crypto, "~> 1.0"},
+      {:credo, "~> 1.6.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false},
+      {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -2,20 +2,20 @@ defmodule ApiAuth.HeaderCompare do
   @moduledoc false
 
   alias ApiAuth.Utils
+  alias Plug.Crypto
 
   def wrap(valid, request) do
     {:ok, valid, request}
   end
 
   def compare(hc, keys) do
-    compare(hc, keys, &SecureCompare.compare/2)
+    compare(hc, keys, &Crypto.secure_compare/2)
   end
 
   def compare({:ok, valid, request} = hc, keys, fun) do
-    with {:ok, valid_value}   <- Utils.find(valid, keys),
+    with {:ok, valid_value} <- Utils.find(valid, keys),
          {:ok, request_value} <- Utils.find(request, keys),
-         true                 <- fun.(valid_value, request_value)
-    do
+         true <- fun.(valid_value, request_value) do
       hc
     else
       _ -> :error

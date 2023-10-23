@@ -4,13 +4,14 @@ defmodule ApiAuthTest do
 
   describe "headers" do
     test "adds missing headers and signs request" do
-      headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
-                |> ApiAuth.headers("/", "1044", "123", method: "POST")
+      headers =
+        [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
+        |> ApiAuth.headers("/", "1044", "123", method: "POST")
 
       expected_headers = [
         Authorization: "APIAuth-HMAC-SHA256 1044:0GZ7kEF4vXa5wjyLYsddgW66Vp1i1i8jA+CO9+9umSI=",
         "X-APIAuth-Content-Hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
-        DATE: "Sat, 01 Jan 2000 00:00:00 GMT",
+        DATE: "Sat, 01 Jan 2000 00:00:00 GMT"
       ]
 
       assert headers == expected_headers
@@ -79,16 +80,23 @@ defmodule ApiAuthTest do
 
     test "it is false when the hash in the headers doesn't match the signed uri" do
       headers = ApiAuth.headers([], "/resource", "1044", "123", method: "PUT", content: "foo")
-      modified_headers = headers |> Keyword.put(:"X-APIAuth-Content-Hash",
-                                                "/N4rLtula/QIYB+3If6bXDONEO5CnqBPrlURto+/j7k=")
+
+      modified_headers =
+        headers
+        |> Keyword.put(
+          :"X-APIAuth-Content-Hash",
+          "/N4rLtula/QIYB+3If6bXDONEO5CnqBPrlURto+/j7k="
+        )
+
       modified_headers
       |> ApiAuth.authentic?("/resource", "1044", "123", method: "PUT", content: "bar")
       |> refute()
     end
 
     test "it is false when more than 15 minutes has passed" do
-      headers = [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
-                |> ApiAuth.headers("/", "1044", "123", method: "POST")
+      headers =
+        [DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
+        |> ApiAuth.headers("/", "1044", "123", method: "POST")
 
       headers
       |> ApiAuth.authentic?("/", "1044", "123", method: "POST")
@@ -98,14 +106,22 @@ defmodule ApiAuthTest do
 
   describe "client_id" do
     test "it gets the client id from the headers" do
-      headers = [Authorization: "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="]
+      headers = [
+        Authorization:
+          "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="
+      ]
+
       client_id_tuple = ApiAuth.client_id(headers)
 
       assert client_id_tuple == {:ok, "client_id"}
     end
 
     test "it gets the client id when given a list of string tuples" do
-      headers = [{"authorization", "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="}]
+      headers = [
+        {"authorization",
+         "APIAuth-HMAC-SHA256 client_id:v5+Ooq88txd0cFyfSXYn03EFK/NQW9Gepk5YIdkZ4qM="}
+      ]
+
       client_id_tuple = ApiAuth.client_id(headers)
 
       assert client_id_tuple == {:ok, "client_id"}
