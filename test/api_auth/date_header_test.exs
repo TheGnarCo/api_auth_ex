@@ -5,8 +5,6 @@ defmodule ApiAuth.DateHeaderTest do
   alias ApiAuth.HeaderValues
   alias ApiAuth.HeaderCompare
 
-  alias Calendar.DateTime.Format
-
   describe "headers" do
     test "it gets the value from the headers" do
       headers = [HTTP_DATE: "Sat, 01 Jan 2000 00:00:00 GMT"]
@@ -29,9 +27,8 @@ defmodule ApiAuth.DateHeaderTest do
         |> DateHeader.headers()
         |> HeaderValues.get(:timestamp)
 
-      diff =
-        Calendar.DateTime.now_utc()
-        |> DateTime.diff(Calendar.DateTime.Parse.httpdate!(value), :second)
+      {:ok, parsed} = DateHeader.parse_httpdate(value)
+      diff = Timex.diff(Timex.now(:utc), parsed, :second)
 
       assert diff == 0
     end
@@ -46,9 +43,8 @@ defmodule ApiAuth.DateHeaderTest do
         |> HeaderValues.unwrap()
         |> Keyword.fetch!(:DATE)
 
-      diff =
-        Calendar.DateTime.now_utc()
-        |> DateTime.diff(Calendar.DateTime.Parse.httpdate!(value), :second)
+      {:ok, parsed} = DateHeader.parse_httpdate(value)
+      diff = Timex.diff(Timex.now(:utc), parsed, :second)
 
       assert diff == 0
     end
@@ -68,7 +64,7 @@ defmodule ApiAuth.DateHeaderTest do
 
   describe "compare" do
     test "it is true when the timestamps match" do
-      timestamp = Format.httpdate(Calendar.DateTime.now_utc())
+      timestamp = DateHeader.httpdate(Timex.now(:utc))
       valid_headers = [DATE: timestamp]
       request_headers = [HTTP_DATE: timestamp]
 
@@ -80,9 +76,10 @@ defmodule ApiAuth.DateHeaderTest do
     end
 
     test "it is false when the timestamps don't match" do
-      time = Calendar.DateTime.now_utc()
-      timestamp1 = Format.httpdate(time)
-      timestamp2 = Format.httpdate(Calendar.DateTime.subtract!(time, 1))
+      now = Timex.now(:utc)
+      timestamp1 = DateHeader.httpdate(now)
+      past = Timex.shift(now, seconds: -1)
+      timestamp2 = DateHeader.httpdate(past)
 
       valid_headers = [DATE: timestamp1]
       request_headers = [HTTP_DATE: timestamp2]
@@ -106,9 +103,8 @@ defmodule ApiAuth.DateHeaderTest do
     end
 
     test "it is true if the timestamps are within 15 minutes from now" do
-      time = Calendar.DateTime.subtract!(Calendar.DateTime.now_utc(), 800)
-      timestamp = Format.httpdate(time)
-
+      time = Timex.shift(Timex.now(:utc), seconds: -800)
+      timestamp = DateHeader.httpdate(time)
       valid_headers = [DATE: timestamp]
       request_headers = [HTTP_DATE: timestamp]
 
@@ -120,8 +116,8 @@ defmodule ApiAuth.DateHeaderTest do
     end
 
     test "it is false if the timestamps are older than 15 minutes" do
-      time = Calendar.DateTime.subtract!(Calendar.DateTime.now_utc(), 901)
-      timestamp = Format.httpdate(time)
+      time = Timex.shift(Timex.now(:utc), seconds: -901)
+      timestamp = DateHeader.httpdate(time)
 
       valid_headers = [DATE: timestamp]
       request_headers = [HTTP_DATE: timestamp]
@@ -134,9 +130,8 @@ defmodule ApiAuth.DateHeaderTest do
     end
 
     test "it is false if the timestamps are in the future" do
-      time = Calendar.DateTime.add!(Calendar.DateTime.now_utc(), 1)
-      timestamp = Format.httpdate(time)
-
+      time = Timex.shift(Timex.now(:utc), seconds: 7)
+      timestamp = DateHeader.httpdate(time)
       valid_headers = [DATE: timestamp]
       request_headers = [HTTP_DATE: timestamp]
 
@@ -145,6 +140,34 @@ defmodule ApiAuth.DateHeaderTest do
       |> DateHeader.compare()
       |> HeaderCompare.to_boolean()
       |> refute()
+    end
+  end
+
+  describe "httpdate" do
+    test "it formats the datetime object correctly" do
+      date = DateTime.new!(~D[2023-10-31], ~T[12:34:16], "Etc/UTC")
+
+      assert DateHeader.httpdate(date) == "Tue, 31 Oct 2023 12:34:16 GMT"
+    end
+  end
+
+  describe "parse_httpdate" do
+    test "it parses httpdate into datetime object" do
+      {:ok, result} = DateHeader.parse_httpdate("Tue, 31 Oct 2023 04:59:03 GMT")
+
+      assert result == %DateTime{
+               year: 2023,
+               month: 10,
+               day: 31,
+               hour: 4,
+               minute: 59,
+               second: 3,
+               time_zone: "Etc/UTC",
+               zone_abbr: "UTC",
+               std_offset: 0,
+               utc_offset: 0,
+               microsecond: {0, 0}
+             }
     end
   end
 end
