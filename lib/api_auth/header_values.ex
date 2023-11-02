@@ -22,10 +22,11 @@ defmodule ApiAuth.HeaderValues do
   def copy({headers, assigns}, keys, value_key, default \\ "") do
     header = Utils.find(headers, keys)
 
-    new_assigns = case header do
-      {:ok, v} -> assigns |> Map.put(value_key, v)
-      _        -> assigns |> Map.put(value_key, default)
-    end
+    new_assigns =
+      case header do
+        {:ok, v} -> assigns |> Map.put(value_key, v)
+        _ -> assigns |> Map.put(value_key, default)
+      end
 
     {headers, new_assigns}
   end
@@ -34,23 +35,25 @@ defmodule ApiAuth.HeaderValues do
     clean_headers = Utils.reject(headers, keys)
 
     {
-      clean_headers  |> Keyword.put(header_key, default),
-      assigns        |> Map.put(value_key, default)
+      clean_headers |> Keyword.put(header_key, default),
+      assigns |> Map.put(value_key, default)
     }
   end
 
   def put_new({headers, assigns}, keys, header_key, value_key, default) do
     header = Utils.find(headers, keys)
 
-    new_headers = case header do
-      {:ok, _v} -> headers
-      _         -> headers |> Keyword.put(header_key, default)
-    end
+    new_headers =
+      case header do
+        {:ok, _v} -> headers
+        _ -> headers |> Keyword.put(header_key, default)
+      end
 
-    new_assigns = case header do
-      {:ok, v} -> assigns |> Map.put(value_key, v)
-      _        -> assigns |> Map.put(value_key, default)
-    end
+    new_assigns =
+      case header do
+        {:ok, v} -> assigns |> Map.put(value_key, v)
+        _ -> assigns |> Map.put(value_key, default)
+      end
 
     {new_headers, new_assigns}
   end

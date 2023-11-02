@@ -1,4 +1,9 @@
 # ApiAuth
+[![Elixir CI](https://github.com/TheGnarCo/api_auth_ex/actions/workflows/elixir.yml/badge.svg?branch=master)](https://github.com/TheGnarCo/api_auth_ex/actions/workflows/elixir.yml)
+<a href="https://gitmoji.dev">
+  <img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square"
+    alt="Gitmoji">
+</a>
 
 HMAC API authentication.
 
@@ -6,19 +11,19 @@ This is Elixir implementation should be compatible with [https://github.com/mgom
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+It is [available in Hex](https://hex.pm/packages/api_auth) and can be installed
 by adding `api_auth` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:api_auth, "~> 0.2.0"}
+    {:api_auth, "~> 0.4.0"}
   ]
 end
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
+and published on [HexDocs](https://hexdocs.pm). The docs can
 be found at [https://hexdocs.pm/api_auth](https://hexdocs.pm/api_auth).
 
 ## Usage
@@ -225,7 +230,5 @@ headers
 
 ![The Gnar Company](https://avatars0.githubusercontent.com/u/17011419?s=100&v=4)
 
-The Gnar Company is a Boston-based development company that builds robust
-web and mobile apps designed for the long haul.
+If you’re ready to dream it, we’re ready to build it. The Gnar is a custom software company ready to tackle your biggest challenges. Visit [The Gnar Company website](https://www.thegnar.com/) to learn more about us or [contact us](https://www.thegnar.com/contact) to see how we can help design and develop your product.
 
-For more information see [our website](https://www.thegnar.co/).

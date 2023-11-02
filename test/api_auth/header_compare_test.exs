@@ -50,9 +50,11 @@ defmodule ApiAuth.HeaderCompareTest do
       request_headers = [foo: "bar", baz: "cat", z: "y"]
 
       hc = HeaderCompare.wrap(valid_headers, request_headers)
-      new_hc = hc
-               |> HeaderCompare.compare([:foo])
-               |> HeaderCompare.compare([:z, :x])
+
+      new_hc =
+        hc
+        |> HeaderCompare.compare([:foo])
+        |> HeaderCompare.compare([:z, :x])
 
       assert new_hc == hc
     end
@@ -62,10 +64,12 @@ defmodule ApiAuth.HeaderCompareTest do
       request_headers = [foo: "bar", baz: "cat", z: "y"]
 
       hc = HeaderCompare.wrap(valid_headers, request_headers)
-      new_hc = hc
-               |> HeaderCompare.compare([:foo])
-               |> HeaderCompare.compare([:baz])
-               |> HeaderCompare.compare([:z, :x])
+
+      new_hc =
+        hc
+        |> HeaderCompare.compare([:foo])
+        |> HeaderCompare.compare([:baz])
+        |> HeaderCompare.compare([:z, :x])
 
       assert new_hc == :error
     end

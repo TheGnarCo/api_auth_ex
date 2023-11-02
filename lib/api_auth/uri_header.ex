@@ -1,9 +1,9 @@
 defmodule ApiAuth.UriHeader do
   @moduledoc false
 
-  @keys       [:"X-Original-URI", :"X-ORIGINAL-URI", :"X_ORIGINAL_URI", :"HTTP_X_ORIGINAL_URI"]
+  @keys [:"X-Original-URI", :"X-ORIGINAL-URI", :X_ORIGINAL_URI, :HTTP_X_ORIGINAL_URI]
   @header_key :"X-Original-URI"
-  @value_key  :uri
+  @value_key :uri
 
   alias ApiAuth.HeaderValues
 
@@ -24,8 +24,8 @@ defmodule ApiAuth.UriHeader do
 
     case query do
       nil -> value_for(path)
-      ""  -> value_for(path)
-      _   -> "#{path}?#{query}"
+      "" -> value_for(path)
+      _ -> "#{path}?#{query}"
     end
   end
 

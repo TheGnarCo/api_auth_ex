@@ -1,0 +1,35 @@
+name: Elixir CI
+on:
+  push:
+    branches: [ "**" ]
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: 1.14.0
+        otp-version: 24
+    - name: Restore dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Install Mix Dependencies
+      run: mix deps.get
+    - name: Check package compiles without warnings
+      run: mix compile --warnings-as-errors
+    - name: Check Formatting
+      run: mix format "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}" --check-formatted
+    - name: Run credo linting
+      run: mix credo
+    - name: Check for security vulnerabilities in deps
+      run: mix deps.audit
+    - name: Run Test Suite
+      run: mix test

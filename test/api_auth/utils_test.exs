@@ -7,8 +7,9 @@ defmodule ApiAuth.UtilsTest do
     test "it returns a tuple with :ok if it finds one of the keys" do
       headers = [hello: "world", foo: "bar"]
 
-      found = headers
-              |> Utils.find([:test, :foo])
+      found =
+        headers
+        |> Utils.find([:test, :foo])
 
       assert found == {:ok, "bar"}
     end
@@ -16,8 +17,9 @@ defmodule ApiAuth.UtilsTest do
     test "it returns :error if it doesn't find one of the keys" do
       headers = [hello: "world", foo: "bar"]
 
-      found = headers
-              |> Utils.find([:other])
+      found =
+        headers
+        |> Utils.find([:other])
 
       assert found == :error
     end
@@ -27,8 +29,9 @@ defmodule ApiAuth.UtilsTest do
     test "it returns the list without the given keys" do
       headers = [hello: "world", foo: "bar", baz: "xyz"]
 
-      new_headers = headers
-                    |> Utils.reject([:foo, :baz])
+      new_headers =
+        headers
+        |> Utils.reject([:foo, :baz])
 
       assert new_headers == [hello: "world"]
     end
